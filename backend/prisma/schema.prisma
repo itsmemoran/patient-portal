@@ -1,0 +1,317 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ==================== MODELS ====================
+
+model User {
+  id                      String   @id @default(uuid())
+  email                   String   @unique
+  password                String
+  fullName                String
+  firstName               String?
+  lastName                String?
+  contact                 String?  // Phone number
+  dateOfBirth             DateTime?
+  address                 String?
+  bloodType               String?
+  height                  String?
+  weight                  String?
+  allergies               String[]
+  chronicConditions       String[]
+  emergencyContactName    String?
+  emergencyContactRelation String?
+  emergencyContactPhone   String?
+  nationality             String?
+  profession              String?
+  socialSecurity          String?
+  profileImage            String?
+  
+  // Settings
+  theme                   String   @default("system") // light, dark, system
+  language                String   @default("fr")
+  fontSize                String   @default("medium")
+  notificationSound       Boolean  @default(true)
+  
+  // Timestamps
+  createdAt               DateTime @default(now())
+  updatedAt               DateTime @updatedAt
+  lastLogin               DateTime?
+  
+  // Relations
+  appointments            Appointment[]
+  medicalRecords          MedicalRecord[]
+  testResults             TestResult[]
+  prescriptions           Prescription[]
+  messages                Message[]
+  documents               Document[]
+  vaccinations            Vaccination[]
+  aiChats                 AIChat[]
+  notifications           Notification[]
+  notificationSettings    NotificationSetting[]
+  privacySettings         PrivacySetting[]
+  
+  @@index([email])
+}
+
+model Doctor {
+  id                String   @id @default(uuid())
+  firstName         String
+  lastName          String
+  name              String   // Ex: "Dr. Martin"
+  specialty         String
+  email             String   @unique
+  phone             String?
+  officeAddress     String?
+  consultationDays  String?
+  bio               String?
+  education         String[]
+  languages         String[]
+  rating            Float?
+  profileImage      String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  @@index([specialty])
+}
+
+model Appointment {
+  id          String   @id @default(uuid())
+  userId      String
+  doctorName  String   // Ex: "Dr. Martin"
+  doctorId    String?
+  specialty   String
+  date        DateTime
+  time        String
+  type        String   // Ex: "Contrôle de routine", "Examen de la vue"
+  status      String   @default("pending") // pending, confirmed, completed, cancelled
+  location    String?  // Ex: "Cabinet 2"
+  reason      String?
+  notes       String?
+  duration    Int?     // en minutes
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId, date])
+  @@index([status])
+}
+
+model MedicalRecord {
+  id          String   @id @default(uuid())
+  userId      String
+  date        DateTime
+  type        String   // "Consultation", "Examen complet", "Urgence"
+  doctor      String
+  doctorId    String?
+  diagnosis   String
+  treatment   String?
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId, date])
+}
+
+model Document {
+  id          String   @id @default(uuid())
+  userId      String
+  name        String
+  type        String   // "Prescription", "Résultats", "Rapport"
+  date        DateTime
+  doctor      String?
+  size        String?  // Ex: "245 KB"
+  fileUrl     String?
+  createdAt   DateTime @default(now())
+  
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId, date])
+}
+
+model Vaccination {
+  id          String   @id @default(uuid())
+  userId      String
+  vaccine     String
+  date        DateTime
+  nextDue     DateTime
+  status      String   @default("à jour")
+  notes       String?
+  createdAt   DateTime @default(now())
+  
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+}
+
+model TestResult {
+  id          String   @id @default(uuid())
+  userId      String
+  testName    String
+  date        DateTime
+  doctor      String
+  status      String   // "normal", "attention", "abnormal"
+  results     Json     // Stocke les résultats comme objet
+  trend       String?  // "up", "down", "stable"
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId, date])
+  @@index([status])
+}
+
+model Prescription {
+  id                String   @id @default(uuid())
+  userId            String
+  medication        String
+  type              String   // "Gouttes oculaires", "Larmes artificielles"
+  dosage            String
+  frequency         String
+  duration          String
+  prescribedBy      String
+  prescribedDate    DateTime
+  expiryDate        DateTime
+  refillsRemaining  Int      @default(0)
+  totalRefills      Int      @default(0)
+  instructions      String?
+  sideEffects       String[]
+  status            String   @default("active") // active, expired, completed
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId, status])
+  @@index([expiryDate])
+}
+
+
+model Message {
+  id          String   @id @default(uuid())
+  userId      String
+  subject     String
+  message     String
+  messageType String?  // "appointment", "question", "prescription", etc.
+  response    String?
+  status      String   @default("pending") // pending, responded, closed
+  priority    String   @default("normal")
+  createdAt   DateTime @default(now())
+  respondedAt DateTime?
+  updatedAt   DateTime @updatedAt
+  
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId, status])
+}
+
+model AIChat {
+  id          String   @id @default(uuid())
+  userId      String
+  messages    Json     // Array of {id, text, sender, timestamp, type}
+  patientData Json?    // Données patient pour contexte
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId])
+}
+
+model Notification {
+  id          String   @id @default(uuid())
+  userId      String
+  title       String
+  message     String
+  type        String   // appointment, result, prescription, general
+  priority    String   @default("normal")
+  read        Boolean  @default(false)
+  actionUrl   String?
+  createdAt   DateTime @default(now())
+  readAt      DateTime?
+  
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@index([userId, read])
+}
+
+model NotificationSetting {
+  id              String   @id @default(uuid())
+  userId          String
+  appointments    Boolean  @default(true)
+  results         Boolean  @default(true)
+  prescriptions   Boolean  @default(true)
+  general         Boolean  @default(false)
+  reminders       Boolean  @default(true)
+  newsletter      Boolean  @default(false)
+  email           Boolean  @default(true)
+  sms             Boolean  @default(true)
+  push            Boolean  @default(true)
+  inApp           Boolean  @default(true)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  
+  user            User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId])
+}
+
+model PrivacySetting {
+  id                String   @id @default(uuid())
+  userId            String
+  dataSharing       Boolean  @default(false)
+  analytics         Boolean  @default(true)
+  marketing         Boolean  @default(false)
+  profileVisibility String   @default("private")
+  activityTracking  Boolean  @default(true)
+  locationServices  Boolean  @default(false)
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  @@unique([userId])
+}
+
+model ClinicInfo {
+  id              String   @id @default(uuid())
+  name            String
+  address         String
+  phone           String
+  emergencyPhone  String
+  email           String
+  website         String?
+  weekdaysHours   String
+  saturdayHours   String
+  sundayHours     String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model EmergencyInfo {
+  id          String   @id @default(uuid())
+  situation   String
+  action      String
+  phone       String
+  available   String
+  priority    Int      @default(0)
+  createdAt   DateTime @default(now())
+  
+  @@index([priority])
+}
