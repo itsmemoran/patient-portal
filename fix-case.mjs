@@ -1,43 +1,65 @@
-import { readFileSync, readdirSync, renameSync, writeFileSync } from 'fs';
-import { resolve, dirname, extname, basename } from 'path';
-import { execSync } from 'child_process';
+import { readFileSync, writeFileSync, readdirSync } from 'fs';
+import { resolve, dirname, basename } from 'path';
 import { glob } from 'glob';
 
-const files = await glob('src/**/*.{jsx,tsx,js,ts}');
+const files = await glob('src/**/*.{jsx,js}');
 
-for (const file of files) {
-  let content = readFileSync(file, 'utf8');
-  const newContent = content.replace(
-    /from\s+['"](\.[^'"]+)['"]/g,
-    (match, importPath) => {
-      const dir = dirname(resolve(file));
-      const fullPath = resolve(dir, importPath);
-      
-      // Try common extensions
-      const exts = ['', '.jsx', '.tsx', '.js', '.ts', '/index.jsx', '/index.tsx'];
-      for (const ext of exts) {
-        try {
-          const candidate = fullPath + ext;
-          const parentDir = dirname(candidate);
-          const fileName = basename(candidate);
-          
-          const actualFiles = readdirSync(parentDir);
-          const match2 = actualFiles.find(f => f.toLowerCase() === fileName.toLowerCase());
-          
-          if (match2 && match2 !== fileName) {
-            const fixedImport = importPath.replace(fileName, match2);
-            console.log(`Fixed in ${file}: ${importPath} → ${fixedImport}`);
-            return match.replace(importPath, fixedImport);
-          }
-        } catch {}
+function findRealPath(dir, importPath) {
+  try {
+    const parts = importPath.split('/');
+    let currentDir = dir;
+
+    for (const part of parts) {
+      if (part === '.' || part === '..') {
+        currentDir = resolve(currentDir, part);
+        continue;
       }
-      return match;
+
+      const entries = readdirSync(currentDir);
+      const match = entries.find(e => e.toLowerCase() === part.toLowerCase());
+
+      if (!match) return null;
+      currentDir = resolve(currentDir, match);
     }
-  );
-  
-  if (content !== newContent) {
-    writeFileSync(file, newContent);
+
+    return currentDir;
+  } catch {
+    return null;
   }
 }
 
-console.log('Done! Now run: git add -A && git commit -m "fix: all import case sensitivity" && git push');
+for (const file of files) {
+  let content = readFileSync(file, 'utf8');
+  let changed = false;
+
+  const newContent = content.replace(
+    /from\s+['"](\.[^'"]+)['"]/g,
+    (original, importPath) => {
+      const dir = dirname(resolve(file));
+      const realPath = findRealPath(dir, importPath);
+
+      if (!realPath) return original;
+
+      // Rebuild the import path with correct casing
+      const corrected = importPath.split('/').reduce((acc, part, i, arr) => {
+        if (part === '.' || part === '..') return acc + part + '/';
+        const currentDir = resolve(dir, arr.slice(0, i).join('/'));
+        const entries = readdirSync(currentDir);
+        const match = entries.find(e => e.toLowerCase() === part.toLowerCase());
+        return acc + (match || part) + (i < arr.length - 1 ? '/' : '');
+      }, '');
+
+      if (corrected !== importPath) {
+        console.log(`[${file}]\n  ✗ ${importPath}\n  ✓ ${corrected}\n`);
+        changed = true;
+        return original.replace(importPath, corrected);
+      }
+
+      return original;
+    }
+  );
+
+  if (changed) writeFileSync(file, newContent);
+}
+
+console.log('✅ All import paths corrected. Now run:\ngit add -A && git commit -m "fix: correct import path casing" && git push');

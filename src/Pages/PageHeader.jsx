@@ -1,4 +1,4 @@
-import { Button } from '../components/ui/button.jsx';
+import { Button } from '../Components/ui/button.jsx';
 import { ArrowLeft } from 'lucide-react';
 
 export function PageHeader({ 
