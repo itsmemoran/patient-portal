@@ -63,10 +63,6 @@ export function NavUser({
                 <User2Icon/>
                 <Link to="/Profile">Profile</Link>
               </DropdownMenuItem>
-              <DropdownMenuItem>
-                <Settings2Icon />
-                <Link to="/Settings">Paramètres</Link>
-              </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuItem>

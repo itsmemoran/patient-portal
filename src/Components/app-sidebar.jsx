@@ -27,7 +27,7 @@ export function AppSidebar(props) {
             <SidebarMenuButton size="lg" asChild>
               <NavLink to="/">
                 <div className="flex aspect-square size-8 items-center justify-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-                <img src="./shared/logo-danan-500x500.png" alt="logo centre medical danan" className="w-6 h-6" />
+                <img src="./shared/logo-danan-500x500.png" alt="logo centre medical danan" className="w-8 h-auto" />
                 </div>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-bold text-base mt-1">Centre Medical Danan</span>

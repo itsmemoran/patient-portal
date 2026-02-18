@@ -14,7 +14,7 @@ return (
       <Card className="max-w-md mx-auto my-12">
       <div className="flex items-center justify-center p-4">
           <a href="#" className="flex items-center gap-2 font-medium">
-            <img src="./shared/logo-danan-500x500.png" alt="logo centre medical danan" className="w-6 h-6" />
+            <img src="./shared/logo-danan-500x500.png" alt="logo centre medical danan" className="w-8 h-auto" />
             Centre Medical Danan
           </a>
         </div>

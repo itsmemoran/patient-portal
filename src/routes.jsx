@@ -4,7 +4,7 @@ import Login from "./Pages/Login";
 import Signup from "./Pages/Signup";
 import Error404 from "./Pages/404";
 
-import Layout from "./Components/shared/Layout";
+import Layout from "../public/shared/Layout";
 
 import Dashboard from "./Pages/Dashboard";
 import Appointments from "./Pages/Appointments";
@@ -14,7 +14,6 @@ import Prescriptions from "./Pages/Prescriptions";
 import Chatbot from "./Pages/Chatbot";
 import Contacts from "./Pages/Contacts";
 import ProfilePage from "./Pages/ProfilePage";
-import SettingsPage from "./Pages/Settings";
 
 
 export const router = createBrowserRouter([
@@ -37,8 +36,7 @@ export const router = createBrowserRouter([
       { path: "prescriptions", element: <Prescriptions /> },
       { path: "chatbot", element: <Chatbot /> },
       { path: "contacts", element: <Contacts /> },
-      { path: "profile", element: <ProfilePage /> },
-      { path: "settings", element: <SettingsPage /> },
+      { path: "profile", element: <ProfilePage /> }
     ],
   },
   // Route 404 quand rien ne matche dans la racine
