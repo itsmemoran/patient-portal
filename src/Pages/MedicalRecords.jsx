@@ -1,7 +1,7 @@
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card.jsx';
-import { Badge } from '../components/ui/badge.jsx';
-import { Button } from '../components/ui/button.jsx';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs.jsx';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card.jsx';
+import { Badge } from '@/components/ui/badge.jsx';
+import { Button } from '@/components/ui/button.jsx';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs.jsx';
 import { FileText, Download, Eye, Calendar, User, AlertTriangle } from 'lucide-react';
 
 export default function MedicalRecords() {

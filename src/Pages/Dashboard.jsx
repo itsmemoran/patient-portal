@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Calendar, FileText, Pill, Clock, AlertCircle, CheckCircle, Bot, LayoutDashboard } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { PageHeader } from './PageHeader';
-import {data} from "../lib/consts/navigation"
+import {data} from "@/lib/consts/navigation"
 
 
 export default function Dashboard({ onNavigate }) {

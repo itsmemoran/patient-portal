@@ -1,15 +1,15 @@
 import { useState } from "react"
-import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/card"
-import { Badge } from "../components/ui/badge"
-import { Button } from "../components/ui/button"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "../components/ui/tabs"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle
-} from "../components/ui/dialog"
+} from "@/components/ui/dialog"
 import { Pill, Download, Clock, AlertTriangle, CheckCircle } from "lucide-react"
 import { toast } from "sonner"
 
