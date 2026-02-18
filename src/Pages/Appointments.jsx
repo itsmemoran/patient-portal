@@ -1,5 +1,5 @@
 import React from 'react'
-import '../styles/index.css'
+import '../Styles/index.css'
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '../Components/ui/card';
 import { Button } from '../Components/ui/button';
