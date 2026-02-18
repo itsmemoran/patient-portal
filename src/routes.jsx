@@ -1,19 +1,19 @@
 // src/routes.jsx
 import { createBrowserRouter } from "react-router-dom";
-import Login from "./Pages/Login";
-import Signup from "./Pages/Signup";
-import Error404 from "./Pages/404";
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import Error404 from "./pages/404";
 
 import Layout from "../public/shared/Layout";
 
-import Dashboard from "./Pages/Dashboard";
-import Appointments from "./Pages/Appointments";
-import MedicalRecords from "./Pages/MedicalRecords";
-import Results from "./Pages/TestResults";
-import Prescriptions from "./Pages/Prescriptions";
-import Chatbot from "./Pages/Chatbot";
-import Contacts from "./Pages/Contacts";
-import ProfilePage from "./Pages/ProfilePage";
+import Dashboard from "./pages/Dashboard";
+import Appointments from "./pages/Appointments";
+import MedicalRecords from "./pages/MedicalRecords";
+import Results from "./pages/TestResults";
+import Prescriptions from "./pages/Prescriptions";
+import Chatbot from "./pages/Chatbot";
+import Contacts from "./pages/Contacts";
+import ProfilePage from "./pages/ProfilePage";
 
 
 export const router = createBrowserRouter([
